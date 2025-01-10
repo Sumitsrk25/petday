@@ -13,8 +13,31 @@ import { VetApp } from "./pages/VetApp";
 import { VetsAdmin } from "./pages/VetsAdmin";
 import { GrommersAdmin } from "./pages/GrommersAdmin";
 import { GrommerApp } from "./pages/GrommerApp";
+import axios from "axios";
+import { useAppStore } from "./store";
+import GuardedRoute from "./components/GuardedRoute";
+
+axios.defaults.withCredentials = true;
+axios.defaults.baseURL = "http://localhost:8080"
+
+axios.default.interceptors.response.use(
+  function (res) {
+    return res;
+  },
+  function (error) {
+
+    if (error.status === 401) {
+      const logout = useAppStore.getState().logout;
+
+      logout()
+    }
+
+    throw new Error(error)
+  }
+);
 
 function App() {
+
   return (
     <BrowserRouter>
       <Navbar />
@@ -22,10 +45,24 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/home1" element={<Home1 />} />
-        <Route path="/addpet" element={<AddPet />} />
-        <Route path="/petupdate" element={<UpdatePet />} />
-        <Route path="/vets" element={<Vets />} />
+        <Route path="/home1" element={
+          <GuardedRoute>
+            <Home1 />
+          </GuardedRoute>
+        } />
+        <Route path="/addpet" element={
+          <GuardedRoute>
+            <AddPet />
+          </GuardedRoute>
+        } />
+        <Route path="/petupdate" element={
+          <GuardedRoute>
+            <UpdatePet />
+          </GuardedRoute>
+        } />
+        <Route path="/vets" element={
+          <Vets />
+        } />
         <Route path="/grommers" element={<Grommers />} />
         <Route path="/vetapp" element={<VetApp />} />
         <Route path="/grommerapp" element={<GrommerApp />} />

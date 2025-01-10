@@ -16,7 +16,7 @@ export const Home1 = () => {
   // Fetch user details
   useEffect(() => {
     axios
-      .get("http://localhost:8080/user/")
+      .get("/user/")
       .then((res) => {
         console.log("Response Data:", res.data); // Check if customer_id is present
         if (res.data.Status === "Success") {
@@ -38,7 +38,7 @@ export const Home1 = () => {
       try {
         // Use a template string to dynamically insert customer_id
         const response = await axios.get(
-          `http://localhost:8080/user/pets/${customer_id}`
+          `/user/pets/${customer_id}`
         );
 
         if (response.status === 200) {
@@ -63,7 +63,7 @@ export const Home1 = () => {
 
   const handleDelete = () => {
     axios
-      .get("http://localhost:8080/user/logout")
+      .get("/user/logout")
       .then((res) => {
         location.reload(true);
       })

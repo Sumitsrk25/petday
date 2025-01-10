@@ -1,13 +1,8 @@
 // models/userModel.js
 
-const mysql = require("mysql");
+const mysql = require("mysql2");
 
-const db = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "",
-  database: "petday",
-});
+const db = mysql.createPool(process.env.DB_URI);
 
 function registerUser(name, lname, email, mobile, password, callback) {
   const sql =

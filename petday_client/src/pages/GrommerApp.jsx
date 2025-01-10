@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import DatePicker from "react-datepicker";
@@ -80,7 +80,7 @@ export const GrommerApp = () => {
     const fetchUserData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8080/user/grommerbyid/${groomer_id}`
+          `/user/grommerbyid/${groomer_id}`
         );
 
         if (response.status === 200) {
@@ -107,7 +107,7 @@ export const GrommerApp = () => {
     const fetchUserData1 = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8080/user/pets/${customer_id}`
+          `/user/pets/${customer_id}`
         );
 
         if (response.status === 200) {
@@ -135,7 +135,7 @@ export const GrommerApp = () => {
   const handleSubmit = (event) => {
     event.preventDefault();
     axios
-      .post("http://localhost:8080/user/book-appointment", values)
+      .post("/user/book-appointment", values)
       // .then((res) => console.log(res))
       .then((res) => {
         if (res.data.Status === "Success") {

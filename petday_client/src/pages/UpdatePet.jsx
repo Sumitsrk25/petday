@@ -30,7 +30,7 @@ export const UpdatePet = () => {
     const fetchUserData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8080/user/petbyid/${petid}`
+          `/user/petbyid/${petid}`
         );
 
         if (response.status === 200) {
@@ -72,7 +72,7 @@ export const UpdatePet = () => {
   const handleSubmit = (event) => {
     event.preventDefault();
     axios
-      .post(`http://localhost:8080/user/update-pet/${petid}`, values)
+      .post(`/user/update-pet/${petid}`, values)
       .then((res) => {
         if (res.data.Status === "Success") {
           alert("Pet Updated Successfully");

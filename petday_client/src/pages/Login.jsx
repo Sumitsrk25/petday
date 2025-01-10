@@ -1,9 +1,11 @@
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useAppStore } from "../store";
 
 export const Login = () => {
   const navigate = useNavigate();
+  const setUser = useAppStore(state => state.setUser)
 
   const [values, setValues] = useState({
     email: "",
@@ -11,18 +13,18 @@ export const Login = () => {
   });
 
   // For Using Cors and JWT Token for axios its required
-  axios.defaults.withCredentials = true;
 
   // handle form on submit
   const handleSubmit = (event) => {
     event.preventDefault();
     axios
-      .post("http://localhost:8080/user/login", values)
+      .post("/user/login", values)
       // .then((res) => console.log(res))
       .then((res) => {
         if (res.data.Status === "Success") {
           alert("Login Successfull");
           // Store customer_id in localStorage
+          setUser({ email: values.email })
 
           navigate("/home1");
         } else {

@@ -51,7 +51,7 @@ export const AddPet = () => {
   const handleSubmit = (event) => {
     event.preventDefault();
     axios
-      .post("http://localhost:8080/user/add-pet", values)
+      .post("/user/add-pet", values)
       // .then((res) => console.log(res))
       .then((res) => {
         if (res.data.Status === "Success") {
