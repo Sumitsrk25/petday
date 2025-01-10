@@ -1,6 +1,13 @@
 // models/userModel.js
 
 const mysql = require("mysql2");
+const Razorpay = require('razorpay');
+const { validateWebhookSignature } = require('razorpay/dist/utils/razorpay-utils');
+
+const razorpay = new Razorpay({
+  key_id: process.env.RZ_KEY,
+  key_secret: process.env.RZ_SECRET,
+});
 
 const db = mysql.createPool(process.env.DB_URI);
 
@@ -100,11 +107,49 @@ function addPetProfile(
 }
 
 function bookAppointment(customer_id, pet_id, book_date, type, callback) {
-  const sql =
-    "INSERT INTO appointment (`customer_id`,`pet_id`,`book_date`,`type`) VALUES ?";
-  const values = [[customer_id, pet_id, book_date, type]];
+  createOrder({ amt: 1 }, (err, order) => {
+    if (err) {
+      return callback(err, null);
+    }
 
-  db.query(sql, [values], callback);
+    const sql =
+      "INSERT INTO appointment (`customer_id`,`pet_id`,`book_date`,`type`, `transaction_id`) VALUES ?";
+    const values = [[customer_id, pet_id, book_date?.split?.("T")?.[0] || '', type, order[1].insertId]];
+
+    db.query(sql, [values], (err, result) => callback(err, [...order, result]));
+  });
+}
+
+async function createOrder(req, callback) {
+  try {
+    const { amt: amount } = req;
+
+    const options = {
+      amount: amount * 100, // Convert amount to paise
+      currency: "INR",
+      receipt: "receipt#1",
+      notes: {},
+    };
+
+    const order = await razorpay.orders.create(options);
+
+    const sql = "INSERT INTO order_transaction (rz_order_id, rz_amount, rz_status) VALUES (?, ?, ?)";
+    const values = [order.id, order.amount, 'created'];
+
+    db.query(sql, values, (err, result) => {
+      if (err) {
+        return callback(err, null);
+      }
+      callback(null, [order, result]);
+    });
+  } catch (error) {
+    callback(error, null);
+  }
+}
+
+function updateOrderStatus(orderId, status, paymentId, callback) {
+  const sql = "UPDATE order_transaction SET rz_status = ?, rz_payment_id = ? WHERE rz_order_id = ?";
+  db.query(sql, [status, paymentId, orderId], callback);
 }
 
 function updatePetProfile(petId, pet_type, name, lname, gender, age, callback) {
@@ -112,6 +157,8 @@ function updatePetProfile(petId, pet_type, name, lname, gender, age, callback) {
     "UPDATE pet_profile SET pet_type = ?, name = ?, lname = ?, gender = ?, age = ? WHERE pet_id = ?";
   db.query(sql, [pet_type, name, lname, gender, age, petId], callback);
 }
+
+function verifyPayment() { }
 
 module.exports = {
   registerUser,
@@ -125,4 +172,5 @@ module.exports = {
   addPetProfile,
   updatePetProfile,
   bookAppointment,
+  updateOrderStatus,
 };

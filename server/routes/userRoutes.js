@@ -16,6 +16,7 @@ router.get("/vets", userController.getVets);
 router.get("/grommers", userController.getGrommers);
 router.get("/vetbyid/:vetId", userController.getVetByVetId);
 router.get("/grommerbyid/:groomer_id", userController.getGrommerByGrommerId);
+router.post("/verify-payment", userController.verifyPayment);
 
 router.get("/", verifyUser, (req, res) => {
   return res.json({

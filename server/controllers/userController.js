@@ -3,6 +3,8 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const userModel = require("../models/userModel");
+const { validateWebhookSignature } = require('razorpay/dist/utils/razorpay-utils');
+const { updateOrderStatus } = require("../models/userModel");
 
 const salt = 10;
 
@@ -185,7 +187,7 @@ function bookAppointment(req, res) {
 
     (err, result) => {
       if (err) return res.json({ Error: "Inserting data Error in server" });
-      return res.json({ Status: "Success" });
+      return res.json({ Status: "Success", result });
     }
   );
 }
@@ -234,10 +236,40 @@ function updatePetByPetId(req, res) {
 //   );
 // };
 
+async function verifyPayment(req, res) {
+  const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
+
+  //key_secert
+  const secret = process.env.RZ_SECRET;
+
+  const body = razorpay_order_id + '|' + razorpay_payment_id;
+
+  try {
+    const isValidSignature = validateWebhookSignature(body, razorpay_signature, secret);
+    if (isValidSignature) {
+      updateOrderStatus(razorpay_order_id, 'paid', razorpay_payment_id, (err, result) => {
+        if (err) {
+          console.error("Error updating order status:", err);
+          return res.status(500).json({ status: 'error', message: 'Error updating order status' });
+        }
+        res.status(200).json({ status: 'ok' });
+        console.log("Payment verification successful");
+      });
+    } else {
+      res.status(400).json({ status: 'verification_failed' });
+      console.log("Payment verification failed");
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ status: 'error', message: 'Error verifying payment' });
+  }
+}
+
 function logout(req, res) {
   res.clearCookie("token");
   return res.json({ Status: "Success" });
 }
+
 module.exports = {
   register,
   login,
@@ -251,4 +283,5 @@ module.exports = {
   addPetProfile,
   updatePetByPetId,
   bookAppointment,
+  verifyPayment,
 };
