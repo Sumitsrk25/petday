@@ -6,6 +6,7 @@ const router = express.Router();
 
 router.post("/register", userController.register);
 router.post("/login", userController.login);
+
 router.post("/vetlogin", userController.vetlogin);
 router.post("/grommerlogin", userController.grommerlogin);
 router.get("/logout", userController.logout);
@@ -19,7 +20,10 @@ router.get("/appbyvetid/:customerId", userController.getAppbyVetId);
 router.get("/appbygromid/:customerId", userController.getAppbyGromId);
 router.get("/vaccinebypetid/:petId", userController.getVaccinebyPetId);
 router.post("/update-vet/:vetid", userController.updateVetByVetId);
+router.post("/vetcount", userController.getVetsCount);
+router.post("/usercount", userController.getUsersCount);
 router.get("/vets", userController.getVets);
+router.get("/users", userController.getUsers);
 router.get("/grommers", userController.getGrommers);
 router.get("/vetbyid/:vetId", userController.getVetByVetId);
 router.get("/grommerbyid/:groomer_id", userController.getGrommerByGrommerId);

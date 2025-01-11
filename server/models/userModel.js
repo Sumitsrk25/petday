@@ -1,8 +1,10 @@
 // models/userModel.js
 
 const mysql = require("mysql2");
-const Razorpay = require('razorpay');
-const { validateWebhookSignature } = require('razorpay/dist/utils/razorpay-utils');
+const Razorpay = require("razorpay");
+const {
+  validateWebhookSignature,
+} = require("razorpay/dist/utils/razorpay-utils");
 
 const razorpay = new Razorpay({
   key_id: process.env.RZ_KEY,
@@ -60,8 +62,47 @@ function getPetByPetId(petId, callback) {
   });
 }
 
+function getVetsCount(callback) {
+  const query = "SELECT COUNT(vetid) FROM vetdetails";
+  db.query(query, (err, results) => {
+    if (err) {
+      return callback(err, null);
+    }
+    return callback(null, results);
+  });
+}
+function getUsersCount(callback) {
+  const query = "SELECT COUNT(customer_id) FROM customer";
+  db.query(query, (err, results) => {
+    if (err) {
+      return callback(err, null);
+    }
+    return callback(null, results);
+  });
+}
+
+function getGrommersCount(callback) {
+  const query = "SELECT COUNT(groomer_id) FROM groomer_details";
+  db.query(query, (err, results) => {
+    if (err) {
+      return callback(err, null);
+    }
+    return callback(null, results);
+  });
+}
+
 function getVets(callback) {
   const query = "SELECT * FROM vetdetails";
+  db.query(query, (err, results) => {
+    if (err) {
+      return callback(err, null);
+    }
+    return callback(null, results);
+  });
+}
+
+function getUsers(callback) {
+  const query = "SELECT * FROM customer";
   db.query(query, (err, results) => {
     if (err) {
       return callback(err, null);
@@ -204,13 +245,22 @@ function bookAppointment(
       return callback(err, null);
     }
 
-
     const sql =
       "INSERT INTO appointment (`customer_id`,`pet_id`,`vetid`,`book_date`,`type`,`centername`, `transaction_id`) VALUES ?";
-    const values = [[customer_id, pet_id, vet_id, book_date?.split?.("T")?.[0] || '', type, clinicname, order[1].insertId]];
+    const values = [
+      [
+        customer_id,
+        pet_id,
+        vet_id,
+        book_date?.split?.("T")?.[0] || "",
+        type,
+        clinicname,
+        order[1].insertId,
+      ],
+    ];
 
     db.query(sql, [values], (err, result) => callback(err, [...order, result]));
-  })
+  });
 }
 
 function addVaccine(customer_id, pet_id, vaccine_name, callback) {
@@ -233,8 +283,9 @@ async function createOrder(req, callback) {
 
     const order = await razorpay.orders.create(options);
 
-    const sql = "INSERT INTO order_transaction (rz_order_id, rz_amount, rz_status) VALUES (?, ?, ?)";
-    const values = [order.id, order.amount, 'created'];
+    const sql =
+      "INSERT INTO order_transaction (rz_order_id, rz_amount, rz_status) VALUES (?, ?, ?)";
+    const values = [order.id, order.amount, "created"];
 
     db.query(sql, values, (err, result) => {
       if (err) {
@@ -248,7 +299,8 @@ async function createOrder(req, callback) {
 }
 
 function updateOrderStatus(orderId, status, paymentId, callback) {
-  const sql = "UPDATE order_transaction SET rz_status = ?, rz_payment_id = ? WHERE rz_order_id = ?";
+  const sql =
+    "UPDATE order_transaction SET rz_status = ?, rz_payment_id = ? WHERE rz_order_id = ?";
   db.query(sql, [status, paymentId, orderId], callback);
 }
 
@@ -349,7 +401,11 @@ module.exports = {
   getGrommerByEmail,
   getPetsByCustomerId,
   getPetByPetId,
+  getVetsCount,
+  getUsersCount,
+  getGrommersCount,
   getVets,
+  getUsers,
   getGrommers,
   getAppbyCustomerId,
   getAppbyVetId,

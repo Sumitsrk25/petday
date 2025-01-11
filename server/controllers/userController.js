@@ -3,7 +3,9 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const userModel = require("../models/userModel");
-const { validateWebhookSignature } = require('razorpay/dist/utils/razorpay-utils');
+const {
+  validateWebhookSignature,
+} = require("razorpay/dist/utils/razorpay-utils");
 const { updateOrderStatus } = require("../models/userModel");
 
 const salt = 10;
@@ -154,6 +156,45 @@ function getPetByPetId(req, res) {
   });
 }
 
+function getVetsCount(req, res) {
+  userModel.getVetsCount((err, data) => {
+    if (err) {
+      console.error("Error fetching vets:", err);
+      return res.status(500).json({ Error: "Internal Server Error" });
+    }
+    if (data.length === 0) {
+      return res.status(404).json({ Message: "No vets found " });
+    }
+    return res.status(200).json(data);
+  });
+}
+
+function getUsersCount(req, res) {
+  userModel.getUsersCount((err, data) => {
+    if (err) {
+      console.error("Error fetching vets:", err);
+      return res.status(500).json({ Error: "Internal Server Error" });
+    }
+    if (data.length === 0) {
+      return res.status(404).json({ Message: "No vets found " });
+    }
+    return res.status(200).json(data);
+  });
+}
+
+function getGrommersCount(req, res) {
+  userModel.getGrommersCount((err, data) => {
+    if (err) {
+      console.error("Error fetching vets:", err);
+      return res.status(500).json({ Error: "Internal Server Error" });
+    }
+    if (data.length === 0) {
+      return res.status(404).json({ Message: "No vets found " });
+    }
+    return res.status(200).json(data);
+  });
+}
+
 function getVets(req, res) {
   userModel.getVets((err, data) => {
     if (err) {
@@ -162,6 +203,19 @@ function getVets(req, res) {
     }
     if (data.length === 0) {
       return res.status(404).json({ Message: "No vets found " });
+    }
+    return res.status(200).json(data);
+  });
+}
+
+function getUsers(req, res) {
+  userModel.getUsers((err, data) => {
+    if (err) {
+      console.error("Error fetching users:", err);
+      return res.status(500).json({ Error: "Internal Server Error" });
+    }
+    if (data.length === 0) {
+      return res.status(404).json({ Message: "No users found " });
     }
     return res.status(200).json(data);
   });
@@ -527,31 +581,46 @@ function updateStatus(req, res) {
 // };
 
 async function verifyPayment(req, res) {
-  const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
+  const { razorpay_order_id, razorpay_payment_id, razorpay_signature } =
+    req.body;
 
   //key_secert
   const secret = process.env.RZ_SECRET;
 
-  const body = razorpay_order_id + '|' + razorpay_payment_id;
+  const body = razorpay_order_id + "|" + razorpay_payment_id;
 
   try {
-    const isValidSignature = validateWebhookSignature(body, razorpay_signature, secret);
+    const isValidSignature = validateWebhookSignature(
+      body,
+      razorpay_signature,
+      secret
+    );
     if (isValidSignature) {
-      updateOrderStatus(razorpay_order_id, 'paid', razorpay_payment_id, (err, result) => {
-        if (err) {
-          console.error("Error updating order status:", err);
-          return res.status(500).json({ status: 'error', message: 'Error updating order status' });
+      updateOrderStatus(
+        razorpay_order_id,
+        "paid",
+        razorpay_payment_id,
+        (err, result) => {
+          if (err) {
+            console.error("Error updating order status:", err);
+            return res.status(500).json({
+              status: "error",
+              message: "Error updating order status",
+            });
+          }
+          res.status(200).json({ status: "ok" });
+          console.log("Payment verification successful");
         }
-        res.status(200).json({ status: 'ok' });
-        console.log("Payment verification successful");
-      });
+      );
     } else {
-      res.status(400).json({ status: 'verification_failed' });
+      res.status(400).json({ status: "verification_failed" });
       console.log("Payment verification failed");
     }
   } catch (error) {
     console.error(error);
-    res.status(500).json({ status: 'error', message: 'Error verifying payment' });
+    res
+      .status(500)
+      .json({ status: "error", message: "Error verifying payment" });
   }
 }
 
@@ -568,7 +637,11 @@ module.exports = {
   logout,
   getPetsByCustomerId,
   getPetByPetId,
+  getVetsCount,
+  getUsersCount,
+  getGrommersCount,
   getVets,
+  getUsers,
   getGrommers,
   getAppbyCustomerId,
   getAppbyVetId,

@@ -28,6 +28,11 @@ import { GrommerLogin } from "./pages/GrommerLogin";
 import { Home1grommer } from "./pages/Home1grommer";
 import { VaccineRecord } from "./pages/VaccineRecord";
 import { VaccineAdd } from "./pages/VaccineAdd";
+import { UsersAdmin } from "./admin/UsersAdmin";
+import { UserPets } from "./admin/UserPets";
+import { VaccineAdd1 } from "./admin/VaccineAdd1";
+import { UserAppHistory } from "./admin/UserAppHistory";
+import { HomeAdmin } from "./admin/HomeAdmin";
 
 axios.defaults.withCredentials = true;
 axios.defaults.baseURL = "http://localhost:8080";
@@ -98,7 +103,6 @@ function App() {
             </GuardedRoute>
           }
         />
-
         <Route
           path="/vaccinerecord"
           element={
@@ -107,7 +111,6 @@ function App() {
             </GuardedRoute>
           }
         />
-
         <Route
           path="/vaccineadd"
           element={
@@ -116,13 +119,17 @@ function App() {
             </GuardedRoute>
           }
         />
-
+        <Route path="/admin/homeadmin" element={<HomeAdmin />} />
         <Route path="/vets" element={<Vets />} />
         <Route path="/grommers" element={<Grommers />} />
         <Route path="/vetapp" element={<VetApp />} />
         <Route path="/apphistory" element={<AppHistory />} />
         <Route path="/grommerapp" element={<GrommerApp />} />
         <Route path="/admin/vetsadmin" element={<VetsAdmin />} />
+        <Route path="/admin/vaccineadd1" element={<VaccineAdd1 />} />
+        <Route path="/admin/usersadmin" element={<UsersAdmin />} />
+        <Route path="/admin/userpets" element={<UserPets />} />
+        <Route path="/admin/userapphistory" element={<UserAppHistory />} />
         <Route path="/admin/grommersadmin" element={<GrommersAdmin />} />
         <Route path="/admin/apphistory" element={<AppHistoryAdmin />} />
         <Route path="/admin/vetadd" element={<VetAdd />} />
