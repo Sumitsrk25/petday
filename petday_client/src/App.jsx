@@ -33,6 +33,8 @@ import { UserPets } from "./admin/UserPets";
 import { VaccineAdd1 } from "./admin/VaccineAdd1";
 import { UserAppHistory } from "./admin/UserAppHistory";
 import { HomeAdmin } from "./admin/HomeAdmin";
+import { PetShop } from "./pages/Shop";
+import { PetShopDetails } from "./ShopDetails";
 
 axios.defaults.withCredentials = true;
 axios.defaults.baseURL = "http://localhost:8080";
@@ -134,6 +136,13 @@ function App() {
         <Route path="/admin/apphistory" element={<AppHistoryAdmin />} />
         <Route path="/admin/vetadd" element={<VetAdd />} />
         <Route path="/admin/vetupdate" element={<VetUpdate />} />
+        <Route path="/shop" element={<GuardedRoute>
+          <PetShop />
+        </GuardedRoute>} />
+
+        <Route path="/shop_details" element={<GuardedRoute>
+          <PetShopDetails />
+        </GuardedRoute>} />
       </Routes>
       <Footer />
     </BrowserRouter>

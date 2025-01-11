@@ -165,7 +165,8 @@ export const VetApp = () => {
                 razorpay_signature: response.razorpay_signature
               })
                 .then(data => {
-                  alert('payment success!!')
+                  alert('payment success! Please wait for confirmation.')
+                  navigate('/apphistory')
                 }).catch(error => {
                   console.error('Error:', error);
                   alert('Error verifying payment');
