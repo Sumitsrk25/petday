@@ -5,7 +5,7 @@ import { useAppStore } from "../store";
 
 export const Login = () => {
   const navigate = useNavigate();
-  const setUser = useAppStore(state => state.setUser)
+  const setUser = useAppStore((state) => state.setUser);
 
   const [values, setValues] = useState({
     email: "",
@@ -24,7 +24,7 @@ export const Login = () => {
         if (res.data.Status === "Success") {
           alert("Login Successfull");
           // Store customer_id in localStorage
-          setUser({ email: values.email })
+          setUser({ email: values.email });
 
           navigate("/home1");
         } else {

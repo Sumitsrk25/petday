@@ -12,7 +12,7 @@ export const Footer = () => {
                     <a href="index.html">
                       <img
                         className="logo_before"
-                        src="assets/images/logo/logo.svg"
+                        src="http://103.131.196.44/~petday/public_html/assets/images/logo/petdaylogo.jpg"
                         alt="Petday Logo"
                       />
                     </a>
@@ -147,7 +147,7 @@ export const Footer = () => {
               <a target="_blank" href="">
                 PetDay
               </a>
-              All rights reserved Copyrights 2022
+              All rights reserved Copyrights 2025
             </p>
           </div>
         </div>

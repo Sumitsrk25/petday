@@ -20,8 +20,9 @@ export const Navbar = () => {
               <a href="index.html">
                 <img
                   className="logo_before"
-                  src="assets/images/logo/logo.svg"
+                  src="http://103.131.196.44/~petday/public_html/assets/images/logo/petdaylogo.jpg"
                   alt="Petday Logo"
+                  style={{ width: 100 }}
                 />
               </a>
             </div>
@@ -224,9 +225,9 @@ export const Navbar = () => {
               <Link to="/">
                 <img
                   className="logo_before"
-                  src="assets/images/logo/logo.svg"
+                  src="http://103.131.196.44/~petday/public_html/assets/images/logo/petdaylogo.jpg"
                   alt="Petday Logo"
-                  style={{ width: 150 }}
+                  style={{ width: 100 }}
                 />
               </Link>
             </div>
@@ -234,26 +235,7 @@ export const Navbar = () => {
               <div
                 className="main_menu_inner collapse navbar-collapse"
                 id="main_menu_dropdown"
-              >
-                <form>
-                  <div className="input-group">
-                    <input
-                      type="text"
-                      className="form-control"
-                      placeholder="Search"
-                      style={{ borderRadius: 5 }}
-                    />
-                    <div className="input-group-btn" style={{ marginLeft: 2 }}>
-                      <button className="btn btn-warning" type="submit">
-                        <i
-                          className="fas fa-search"
-                          style={{ color: "black", marginLeft: 3 }}
-                        />
-                      </button>
-                    </div>
-                  </div>
-                </form>
-              </div>
+              ></div>
             </nav>
             <ul className="header_btns_group unorder_list_right">
               <li>
@@ -281,12 +263,7 @@ export const Navbar = () => {
                   <small className="cart_counter">Login</small>
                 </a>
               </li>
-              <li className="dropdown">
-                <a href="logout" className="cart_btn" type="button">
-                  <i className="fas fa-paw" />
-                  <small className="cart_counter">Partners</small>
-                </a>
-              </li>
+
               <li className="dropdown">
                 <a href="logout" className="cart_btn" type="button">
                   <i className="fas fa-paw" />
