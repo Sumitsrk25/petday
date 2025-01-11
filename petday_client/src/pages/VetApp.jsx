@@ -143,8 +143,40 @@ export const VetApp = () => {
       // .then((res) => console.log(res))
       .then((res) => {
         if (res.data.Status === "Success") {
-          alert("Appointment Added. Plz wait for confirmation");
-          navigate("/home1");
+          const options = {
+            key: 'rzp_test_u2CmaTROSWoJG2', // Replace with your Razorpay key_id
+            amount: res.data.result[0].amount,
+            currency: res.data.result[0].currency,
+            name: 'Your Company Name',
+            description: 'Test Transaction',
+            order_id: res.data.result[0].id, // This is the order_id created in the backend
+            prefill: {
+              name: 'Your Name',
+              email: 'your.email@example.com',
+              contact: '9999999999'
+            },
+            theme: {
+              color: '#F37254'
+            },
+            handler: function (response) {
+              axios.post('/user/verify-payment', {
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature
+              })
+                .then(data => {
+                  alert('payment success!!')
+                }).catch(error => {
+                  console.error('Error:', error);
+                  alert('Error verifying payment');
+                });
+
+            }
+          };
+
+          const rzp = new Razorpay(options);
+          rzp.open();
+
         } else {
           alert("Error1");
         }

@@ -25,6 +25,7 @@ router.get("/vetbyid/:vetId", userController.getVetByVetId);
 router.get("/grommerbyid/:groomer_id", userController.getGrommerByGrommerId);
 router.post("/update-status", userController.updateStatus);
 router.post("/add-vaccine", userController.addVaccine);
+router.post("/verify-payment", userController.verifyPayment);
 
 router.get("/", verifyUser, (req, res) => {
   return res.json({

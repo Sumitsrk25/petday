@@ -1,6 +1,13 @@
 // models/userModel.js
 
 const mysql = require("mysql2");
+const Razorpay = require('razorpay');
+const { validateWebhookSignature } = require('razorpay/dist/utils/razorpay-utils');
+
+const razorpay = new Razorpay({
+  key_id: process.env.RZ_KEY,
+  key_secret: process.env.RZ_SECRET,
+});
 
 const db = mysql.createPool(process.env.DB_URI);
 
@@ -154,8 +161,8 @@ function addPetProfile(
 
 function addVetProfile(vetData, callback) {
   const sql = `
-    INSERT INTO vetdetails 
-    (firstName, lastName, mobile, email, password, location, postaladdress, pin, city, state, gender, bio, gstno, medicalregno, workingdays, workinghrs_frm, workinghrs_to, speciality, clinicname) 
+    INSERT INTO vetdetails
+    (firstName, lastName, mobile, email, password, location, postaladdress, pin, city, state, gender, bio, gstno, medicalregno, workingdays, workinghrs_frm, workinghrs_to, speciality, clinicname)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 
   const values = [
@@ -192,10 +199,18 @@ function bookAppointment(
   clinicname,
   callback
 ) {
-  const sql =
-    "INSERT INTO appointment (`customer_id`,`pet_id`,`vetid`,`book_date`,`type`,`centername`) VALUES ?";
-  const values = [[customer_id, pet_id, vet_id, book_date, type, clinicname]];
-  db.query(sql, [values], callback);
+  createOrder({ amt: 1 }, (err, order) => {
+    if (err) {
+      return callback(err, null);
+    }
+
+
+    const sql =
+      "INSERT INTO appointment (`customer_id`,`pet_id`,`vetid`,`book_date`,`type`,`centername`, `transaction_id`) VALUES ?";
+    const values = [[customer_id, pet_id, vet_id, book_date?.split?.("T")?.[0] || '', type, clinicname, order[1].insertId]];
+
+    db.query(sql, [values], (err, result) => callback(err, [...order, result]));
+  })
 }
 
 function addVaccine(customer_id, pet_id, vaccine_name, callback) {
@@ -203,6 +218,38 @@ function addVaccine(customer_id, pet_id, vaccine_name, callback) {
     "INSERT INTO vaccine_record (`customer_id`,`pet_id`,`vaccine_name`) VALUES ?";
   const values = [[customer_id, pet_id, vaccine_name]];
   db.query(sql, [values], callback);
+}
+
+async function createOrder(req, callback) {
+  try {
+    const { amt: amount } = req;
+
+    const options = {
+      amount: amount * 100, // Convert amount to paise
+      currency: "INR",
+      receipt: "receipt#1",
+      notes: {},
+    };
+
+    const order = await razorpay.orders.create(options);
+
+    const sql = "INSERT INTO order_transaction (rz_order_id, rz_amount, rz_status) VALUES (?, ?, ?)";
+    const values = [order.id, order.amount, 'created'];
+
+    db.query(sql, values, (err, result) => {
+      if (err) {
+        return callback(err, null);
+      }
+      callback(null, [order, result]);
+    });
+  } catch (error) {
+    callback(error, null);
+  }
+}
+
+function updateOrderStatus(orderId, status, paymentId, callback) {
+  const sql = "UPDATE order_transaction SET rz_status = ?, rz_payment_id = ? WHERE rz_order_id = ?";
+  db.query(sql, [status, paymentId, orderId], callback);
 }
 
 function updatePetProfile(petId, pet_type, name, lname, gender, age, callback) {
@@ -235,10 +282,10 @@ function updateVetProfile(
   callback
 ) {
   const sql = `
-    UPDATE vetdetails SET 
-      firstName = ?, lastName = ?, email = ?, mobile = ?, password = ?, location = ?, 
-      postaladdress = ?, pin = ?, city = ?, state = ?, gender = ?, bio = ?, 
-      gstno = ?, medicalregno = ?, speciality = ?, clinicname = ?, 
+    UPDATE vetdetails SET
+      firstName = ?, lastName = ?, email = ?, mobile = ?, password = ?, location = ?,
+      postaladdress = ?, pin = ?, city = ?, state = ?, gender = ?, bio = ?,
+      gstno = ?, medicalregno = ?, speciality = ?, clinicname = ?,
       workingdays = ?, workinghrs_frm = ?, workinghrs_to = ?
     WHERE vetid = ?
   `;
@@ -317,4 +364,5 @@ module.exports = {
   updateVetProfile,
   bookAppointment,
   updateStatus,
+  updateOrderStatus,
 };
