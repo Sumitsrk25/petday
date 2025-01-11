@@ -50,6 +50,8 @@ function login(req, res) {
         res.cookie("token", token);
         return res.json({ Status: "Success" });
       } else {
+        console.log("Password not matched");
+
         return res.json({ Error: "Password not matched" });
       }
     } else {
