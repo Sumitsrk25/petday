@@ -47,7 +47,13 @@ function login(req, res) {
           }
         );
 
-        res.cookie("token", token);
+        const cookieOptions = {
+          httpOnly: true,
+          secure: true, // Use secure cookie in production
+          sameSite: 'None', // Allow cross-site cookies
+        };
+
+        res.cookie("token", token, cookieOptions);
         return res.json({ Status: "Success" });
       } else {
         console.log("Password not matched");
@@ -626,6 +632,16 @@ async function verifyPayment(req, res) {
   }
 }
 
+function getAllShopItems(req, res) {
+  userModel.getAllShopItems((err, data) => {
+    if (err) {
+      console.error("Error fetching shop items:", err);
+      return res.status(500).json({ Error: "Internal Server Error" });
+    }
+    return res.status(200).json(data);
+  });
+}
+
 function logout(req, res) {
   res.clearCookie("token");
   return res.json({ Status: "Success" });
@@ -659,4 +675,5 @@ module.exports = {
   bookAppointment,
   updateStatus,
   verifyPayment,
+  getAllShopItems
 };

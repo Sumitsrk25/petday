@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 09, 2025 at 12:47 PM
+-- Generation Time: Jan 11, 2025 at 07:38 AM
 -- Server version: 10.4.20-MariaDB
 -- PHP Version: 7.3.29
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
@@ -20,19 +20,19 @@ SET time_zone = "+00:00";
 --
 -- Database: `petday`
 --
-
 -- --------------------------------------------------------
 --
 -- Table structure for table `appointment`
 --
-
 CREATE TABLE `appointment` (
   `aid` int(11) NOT NULL,
   `customer_id` int(11) NOT NULL,
   `pet_id` int(11) NOT NULL,
+  `vetid` int(11) NOT NULL,
   `book_date` date NOT NULL,
+  `centername` varchar(200) NOT NULL,
   `type` varchar(255) NOT NULL,
-  `status` varchar(255) NOT NULL,
+  `status` varchar(255) NOT NULL DEFAULT 'Pending',
   `pay_amt` int(11) NOT NULL,
   `pay_method` int(11) NOT NULL,
   `pay_status` varchar(255) NOT NULL,
@@ -47,12 +47,13 @@ CREATE TABLE `appointment` (
 --
 -- Dumping data for table `appointment`
 --
-
 INSERT INTO `appointment` (
     `aid`,
     `customer_id`,
     `pet_id`,
+    `vetid`,
     `book_date`,
+    `centername`,
     `type`,
     `status`,
     `pay_amt`,
@@ -69,9 +70,11 @@ VALUES (
     1,
     1,
     2,
+    2,
     '2024-11-28',
+    '',
     'Clinic Visit',
-    'pending',
+    'Approve',
     0,
     0,
     '',
@@ -86,9 +89,11 @@ VALUES (
     2,
     1,
     3,
+    1,
     '2024-11-21',
+    '',
     'Grooming',
-    'pending',
+    'Pending',
     0,
     0,
     '',
@@ -103,9 +108,11 @@ VALUES (
     3,
     1,
     2,
+    2,
     '2024-11-29',
+    '',
     'Online Consult',
-    'pending',
+    'Pending',
     100,
     0,
     '',
@@ -120,9 +127,11 @@ VALUES (
     4,
     1,
     2,
+    1,
     '0000-00-00',
     '',
     '',
+    'Pending',
     0,
     0,
     '',
@@ -137,9 +146,11 @@ VALUES (
     5,
     1,
     2,
+    3,
     '2025-01-20',
-    'Clinic Visit',
     '',
+    'Clinic Visit',
+    'Pending',
     0,
     0,
     '',
@@ -154,9 +165,11 @@ VALUES (
     6,
     1,
     1,
+    0,
     '2025-01-11',
-    'Visit',
     '',
+    'Visit',
+    'Rejected',
     0,
     0,
     '',
@@ -166,12 +179,30 @@ VALUES (
     '0000-00-00 00:00:00',
     '',
     0
+  ),
+  (
+    32,
+    1,
+    14,
+    1,
+    '2025-01-19',
+    'What a Cat',
+    'Visit',
+    'Pending',
+    0,
+    0,
+    '',
+    '',
+    '2025-01-11 01:28:54',
+    0,
+    '0000-00-00 00:00:00',
+    '',
+    0
   );
 -- --------------------------------------------------------
 --
 -- Table structure for table `customer`
 --
-
 CREATE TABLE `customer` (
   `customer_id` int(11) NOT NULL,
   `name` varchar(200) NOT NULL,
@@ -191,7 +222,6 @@ CREATE TABLE `customer` (
 --
 -- Dumping data for table `customer`
 --
-
 INSERT INTO `customer` (
     `customer_id`,
     `name`,
@@ -376,7 +406,6 @@ VALUES (
 --
 -- Table structure for table `groomer_details`
 --
-
 CREATE TABLE `groomer_details` (
   `groomer_id` int(11) NOT NULL,
   `first_name` varchar(50) DEFAULT NULL,
@@ -404,7 +433,6 @@ CREATE TABLE `groomer_details` (
 --
 -- Dumping data for table `groomer_details`
 --
-
 INSERT INTO `groomer_details` (
     `groomer_id`,
     `first_name`,
@@ -524,7 +552,6 @@ VALUES (
 --
 -- Table structure for table `login`
 --
-
 CREATE TABLE `login` (
   `id` int(11) NOT NULL,
   `name` varchar(200) NOT NULL,
@@ -535,7 +562,6 @@ CREATE TABLE `login` (
 --
 -- Dumping data for table `login`
 --
-
 INSERT INTO `login` (`id`, `name`, `email`, `password`)
 VALUES (
     1,
@@ -553,7 +579,6 @@ VALUES (
 --
 -- Table structure for table `pet_profile`
 --
-
 CREATE TABLE `pet_profile` (
   `pet_id` int(11) NOT NULL,
   `customer_id` int(11) NOT NULL,
@@ -570,7 +595,6 @@ CREATE TABLE `pet_profile` (
 --
 -- Dumping data for table `pet_profile`
 --
-
 INSERT INTO `pet_profile` (
     `pet_id`,
     `customer_id`,
@@ -755,7 +779,6 @@ VALUES (
 --
 -- Table structure for table `products`
 --
-
 CREATE TABLE `products` (
   `item_id` int(11) NOT NULL,
   `item_name` varchar(200) NOT NULL,
@@ -775,9 +798,33 @@ CREATE TABLE `products` (
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8;
 -- --------------------------------------------------------
 --
+-- Table structure for table `vaccine_record`
+--
+CREATE TABLE `vaccine_record` (
+  `vaccine_id` int(11) NOT NULL,
+  `customer_id` int(11) NOT NULL,
+  `pet_id` int(11) NOT NULL,
+  `vaccine_name` varchar(200) NOT NULL,
+  `created` datetime NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`vaccine_id`)
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
+--
+-- Dumping data for table `vaccine_record`
+--
+INSERT INTO `vaccine_record` (
+    `vaccine_id`,
+    `customer_id`,
+    `pet_id`,
+    `vaccine_name`,
+    `created`
+  )
+VALUES (1, 1, 1, 'Rabies Vaccine', '0000-00-00'),
+  (2, 1, 2, 'Core Vaccine', '0000-00-00'),
+  (3, 1, 2, 'Test Vaccine', '2025-01-11');
+-- --------------------------------------------------------
+--
 -- Table structure for table `vetdetails`
 --
-
 CREATE TABLE `vetdetails` (
   `vetid` int(11) NOT NULL,
   `firstName` varchar(50) DEFAULT NULL,
@@ -807,7 +854,6 @@ CREATE TABLE `vetdetails` (
 --
 -- Dumping data for table `vetdetails`
 --
-
 INSERT INTO `vetdetails` (
     `vetid`,
     `firstName`,
@@ -837,7 +883,7 @@ VALUES (
     1,
     'Test',
     'Vet',
-    '9370498438',
+    '9310498438',
     'testvet@gmail.com',
     'test12345',
     'Pune',
@@ -957,6 +1003,31 @@ VALUES (
     '15:26',
     'Testing',
     'Test Clinic1'
+  ),
+  (
+    6,
+    'First Name',
+    'Last Name',
+    'Mobile',
+    'example@gmail.com',
+    'Password',
+    'Pune',
+    'Test Lab1',
+    '411020',
+    'Pune',
+    'Maharashtra',
+    'Female',
+    '2025-01-10 19:06:13',
+    NULL,
+    NULL,
+    'I am testing form',
+    '6tyr4dd',
+    'r5ty55',
+    'Monday,Friday,Sunday',
+    '19:06',
+    '19:07',
+    'Cat Dogs',
+    'New Clinic India'
   );
 COMMIT;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */

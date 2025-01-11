@@ -394,6 +394,16 @@ function updateStatus(appointmentId, status, callback) {
   });
 }
 
+function getAllShopItems(callback) {
+  const query = "SELECT * FROM products WHERE item_image NOT LIKE '%example%'";
+  db.query(query, (err, results) => {
+    if (err) {
+      return callback(err, null);
+    }
+    return callback(null, results);
+  });
+}
+
 module.exports = {
   registerUser,
   getUserByEmail,
@@ -421,4 +431,5 @@ module.exports = {
   bookAppointment,
   updateStatus,
   updateOrderStatus,
+  getAllShopItems,
 };

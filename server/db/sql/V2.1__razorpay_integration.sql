@@ -20,3 +20,10 @@ ALTER TABLE `appointment` CHANGE `refund_amt` `refund_amt` INT NULL,
   CHANGE `refund_date` `refund_date` DATETIME NULL,
   CHANGE `refund_transaction_id` `refund_transaction_id` VARCHAR(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL,
   CHANGE `service_provider_id` `service_provider_id` INT NULL;
+-- fixes for customer table
+ALTER TABLE `customer` CHANGE `gender` `gender` VARCHAR(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL,
+  CHANGE `dob` `dob` VARCHAR(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL,
+  CHANGE `address` `address` VARCHAR(300) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL,
+  CHANGE `city` `city` VARCHAR(300) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL,
+  CHANGE `state` `state` VARCHAR(300) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL,
+  CHANGE `pincode` `pincode` VARCHAR(300) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL;
