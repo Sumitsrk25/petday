@@ -47,7 +47,13 @@ function login(req, res) {
           }
         );
 
-        res.cookie("token", token);
+        const cookieOptions = {
+          httpOnly: true,
+          secure: true, // Use secure cookie in production
+          sameSite: 'None', // Allow cross-site cookies
+        };
+
+        res.cookie("token", token, cookieOptions);
         return res.json({ Status: "Success" });
       } else {
         return res.json({ Error: "Password not matched" });
