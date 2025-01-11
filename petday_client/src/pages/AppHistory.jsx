@@ -2,7 +2,7 @@ import axios from "axios";
 import React, { useState, useEffect } from "react";
 import { NavLink, Link } from "react-router-dom";
 
-export const GrommersAdmin = () => {
+export const AppHistory = () => {
   const [auth, setAuth] = useState(false);
   const [message, setMessage] = useState("");
   const [name, setName] = useState("");
@@ -16,7 +16,7 @@ export const GrommersAdmin = () => {
   // Fetch user details
   useEffect(() => {
     axios
-      .get("/user/")
+      .get("/user")
       .then((res) => {
         console.log("Response Data:", res.data); // Check if customer_id is present
         if (res.data.Status === "Success") {
@@ -34,14 +34,18 @@ export const GrommersAdmin = () => {
   }, []);
 
   useEffect(() => {
-    const fetchUserData = async () => {
+    const fetchAppointments = async () => {
       try {
-        // Use a template string to dynamically insert customer_id
-        const response = await axios.get(`/user/grommers`);
+        if (!customer_id) return; // Ensure customer_id is available before calling
+
+        const response = await axios.get(
+          `/user/appbycustomerid/${customer_id}`
+        );
+        console.log("Appointments Response:", response.data);
 
         if (response.status === 200) {
           setAuth(true);
-          setUserData(response.data); // Assuming the response contains an array or array-like structure
+          setUserData(response.data); // Update user data state
         } else {
           setAuth(false);
           setMessage(response.data.message || "Authorization failed.");
@@ -49,19 +53,16 @@ export const GrommersAdmin = () => {
       } catch (err) {
         setAuth(false);
         setMessage("An error occurred. Please log in again.");
-        console.error(err);
+        console.error("Error fetching appointments:", err);
       }
     };
 
-    // Ensure customer_id is available before making the API call
-    if (customer_id) {
-      fetchUserData();
-    }
+    fetchAppointments();
   }, [customer_id]); // Add customer_id as a dependency
 
   const handleDelete = () => {
     axios
-      .get("/user/logout")
+      .get("/userlogout")
       .then((res) => {
         location.reload(true);
       })
@@ -76,7 +77,7 @@ export const GrommersAdmin = () => {
             <div className="row">
               <div className="section_title">
                 <h2 className="title_text">
-                  <span className="sub_title">Pets</span> Grommers
+                  <span className="sub_title">Pets</span> <h4>Appointments</h4>
                 </h2>
               </div>
               {auth ? (
@@ -89,30 +90,26 @@ export const GrommersAdmin = () => {
                   <table class="table table-striped table-bordered">
                     <thead>
                       <tr>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Mobile</th>
-                        <th>Location and City </th>
-                        <th>Grommering Center</th>
-                        <th>Edit</th>
+                        <th>Your Pet Name</th>
+                        <th>Pet Type</th>
+                        <th>Vet Name</th>
+                        <th>Appointment Date</th>
+                        <th>Purpose</th>
+                        <th>Status </th>
                       </tr>
                     </thead>
                     <tbody>
                       {Array.isArray(userData) && userData.length > 0 ? (
                         userData.map((user, index) => (
                           <tr key={index}>
+                            <td>{user.name}</td>
+                            <td>{user.pet_type}</td>
                             <td>
-                              {user.first_name} {user.last_name}
+                              Dr. {user.firstName} {user.lastName}
                             </td>
-                            <td> {user.email}</td>
-                            <td> {user.mobile}</td>
-                            <td>
-                              {user.location}, {user.city}
-                            </td>
-                            <td>{user.grooming_center_name}</td>
-                            <td>
-                              <i className="fa fa-pencil ms-2"></i>
-                            </td>
+                            <td> {user.book_date}</td>
+                            <td> {user.type}</td>
+                            <td>{user.status}</td>
                           </tr>
                         ))
                       ) : (

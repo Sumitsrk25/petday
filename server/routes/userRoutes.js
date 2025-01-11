@@ -6,16 +6,25 @@ const router = express.Router();
 
 router.post("/register", userController.register);
 router.post("/login", userController.login);
+router.post("/vetlogin", userController.vetlogin);
+router.post("/grommerlogin", userController.grommerlogin);
 router.get("/logout", userController.logout);
 router.get("/pets/:customerId", userController.getPetsByCustomerId);
 router.get("/petbyid/:petId", userController.getPetByPetId);
 router.post("/add-pet", userController.addPetProfile);
+router.post("/add-vet", userController.addVetProfile);
 router.post("/book-appointment", userController.bookAppointment);
-router.post("/update-pet/:petId", userController.updatePetByPetId);
+router.get("/appbycustomerid/:customerId", userController.getAppbyCustomerId);
+router.get("/appbyvetid/:customerId", userController.getAppbyVetId);
+router.get("/appbygromid/:customerId", userController.getAppbyGromId);
+router.get("/vaccinebypetid/:petId", userController.getVaccinebyPetId);
+router.post("/update-vet/:vetid", userController.updateVetByVetId);
 router.get("/vets", userController.getVets);
 router.get("/grommers", userController.getGrommers);
 router.get("/vetbyid/:vetId", userController.getVetByVetId);
 router.get("/grommerbyid/:groomer_id", userController.getGrommerByGrommerId);
+router.post("/update-status", userController.updateStatus);
+router.post("/add-vaccine", userController.addVaccine);
 
 router.get("/", verifyUser, (req, res) => {
   return res.json({

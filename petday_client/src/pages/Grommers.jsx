@@ -76,7 +76,7 @@ export const Grommers = () => {
             <div className="row">
               <div className="section_title">
                 <h2 className="title_text">
-                  <span className="sub_title">Pets</span> Vets
+                  <span className="sub_title">Pets</span> Grommers
                 </h2>
               </div>
               {auth ? (

@@ -10,34 +10,44 @@ import { UpdatePet } from "./pages/UpdatePet";
 import { Vets } from "./pages/Vets";
 import { Grommers } from "./pages/Grommers";
 import { VetApp } from "./pages/VetApp";
-import { VetsAdmin } from "./pages/VetsAdmin";
-import { GrommersAdmin } from "./pages/GrommersAdmin";
+import { VetsAdmin } from "./admin/VetsAdmin";
+import { GrommersAdmin } from "./admin/GrommersAdmin";
 import { GrommerApp } from "./pages/GrommerApp";
+import { AppHistory } from "./pages/AppHistory";
+
 import axios from "axios";
 import { useAppStore } from "./store";
 import GuardedRoute from "./components/GuardedRoute";
+import { Error } from "./pages/Error";
+import { AppHistoryAdmin } from "./admin/AppHistoryAdmin";
+import { VetAdd } from "./admin/VetAdd";
+import { VetUpdate } from "./admin/VetUpdate";
+import { VetLogin } from "./pages/VetLogin";
+import { Home1vet } from "./pages/Home1vet";
+import { GrommerLogin } from "./pages/GrommerLogin";
+import { Home1grommer } from "./pages/Home1grommer";
+import { VaccineRecord } from "./pages/VaccineRecord";
+import { VaccineAdd } from "./pages/VaccineAdd";
 
 axios.defaults.withCredentials = true;
-axios.defaults.baseURL = "http://localhost:8080"
+axios.defaults.baseURL = "http://localhost:8080";
 
 axios.default.interceptors.response.use(
   function (res) {
     return res;
   },
   function (error) {
-
     if (error.status === 401) {
       const logout = useAppStore.getState().logout;
 
-      logout()
+      logout();
     }
 
-    throw new Error(error)
+    throw new Error(error);
   }
 );
 
 function App() {
-
   return (
     <BrowserRouter>
       <Navbar />
@@ -45,29 +55,78 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/home1" element={
-          <GuardedRoute>
-            <Home1 />
-          </GuardedRoute>
-        } />
-        <Route path="/addpet" element={
-          <GuardedRoute>
-            <AddPet />
-          </GuardedRoute>
-        } />
-        <Route path="/petupdate" element={
-          <GuardedRoute>
-            <UpdatePet />
-          </GuardedRoute>
-        } />
-        <Route path="/vets" element={
-          <Vets />
-        } />
+        <Route path="/vetlogin" element={<VetLogin />} />
+        <Route path="/grommerlogin" element={<GrommerLogin />} />
+        <Route path="*" element={<Error />} />
+        <Route
+          path="/home1"
+          element={
+            <GuardedRoute>
+              <Home1 />
+            </GuardedRoute>
+          }
+        />
+        <Route
+          path="/addpet"
+          element={
+            <GuardedRoute>
+              <AddPet />
+            </GuardedRoute>
+          }
+        />
+        <Route
+          path="/petupdate"
+          element={
+            <GuardedRoute>
+              <UpdatePet />
+            </GuardedRoute>
+          }
+        />
+        <Route
+          path="/homevet"
+          element={
+            <GuardedRoute>
+              <Home1vet />
+            </GuardedRoute>
+          }
+        />
+        <Route
+          path="/homegrommer"
+          element={
+            <GuardedRoute>
+              <Home1grommer />
+            </GuardedRoute>
+          }
+        />
+
+        <Route
+          path="/vaccinerecord"
+          element={
+            <GuardedRoute>
+              <VaccineRecord />
+            </GuardedRoute>
+          }
+        />
+
+        <Route
+          path="/vaccineadd"
+          element={
+            <GuardedRoute>
+              <VaccineAdd />
+            </GuardedRoute>
+          }
+        />
+
+        <Route path="/vets" element={<Vets />} />
         <Route path="/grommers" element={<Grommers />} />
         <Route path="/vetapp" element={<VetApp />} />
+        <Route path="/apphistory" element={<AppHistory />} />
         <Route path="/grommerapp" element={<GrommerApp />} />
-        <Route path="/vetsadmin" element={<VetsAdmin />} />
-        <Route path="/grommersadmin" element={<GrommersAdmin />} />
+        <Route path="/admin/vetsadmin" element={<VetsAdmin />} />
+        <Route path="/admin/grommersadmin" element={<GrommersAdmin />} />
+        <Route path="/admin/apphistory" element={<AppHistoryAdmin />} />
+        <Route path="/admin/vetadd" element={<VetAdd />} />
+        <Route path="/admin/vetupdate" element={<VetUpdate />} />
       </Routes>
       <Footer />
     </BrowserRouter>

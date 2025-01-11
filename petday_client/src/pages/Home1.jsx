@@ -36,10 +36,7 @@ export const Home1 = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        // Use a template string to dynamically insert customer_id
-        const response = await axios.get(
-          `/user/pets/${customer_id}`
-        );
+        const response = await axios.get(`/user/pets/${customer_id}`);
 
         if (response.status === 200) {
           setAuth(true);
@@ -92,13 +89,23 @@ export const Home1 = () => {
                 </Link>
 
                 <Link
-                  to="/addpet"
+                  to="/apphistory"
                   className="btn btn_warning mb-5 mt-5 ms-5"
                   type="button"
                 >
                   {" "}
                   <i className="fas fa-paw" />
                   <small className="cart_counter">Appointment History</small>
+                </Link>
+
+                <Link
+                  to="/vaccineadd"
+                  className="btn btn_warning mb-5 mt-5 ms-5"
+                  type="button"
+                >
+                  {" "}
+                  <i className="fas fa-paw" />
+                  <small className="cart_counter">Vaccine Add</small>
                 </Link>
               </div>
 
@@ -121,26 +128,34 @@ export const Home1 = () => {
                           </div>
 
                           <div className="item_content ">
-                            <div
-                              style={{
-                                textAlign: "right",
+                            <div className="d-flex justify-content-evenly mb-4">
+                              <Link
+                                to="/vaccinerecord"
+                                state={{
+                                  petid: user.pet_id,
+                                }}
+                                className="btn btn_warning "
+                                type="button"
+                                style={{ fontSize: "14px" }}
+                              >
+                                Vaccine Record
+                              </Link>
 
-                                borderRadius: "100%",
-                              }}
-                            >
                               <Link
                                 to="/petupdate"
                                 state={{
                                   petid: user.pet_id,
                                 }}
+                                className="btn btn_warning "
+                                type="button"
+                                style={{ fontSize: "14px" }}
                               >
-                                <i class="fas fa-pencil " title="Edit"></i>
+                                Edit
                               </Link>
                             </div>
                             <h2 className="item_title "> {user.pet_type}</h2>
-                            <h5>Fname: {user.name}</h5>
+                            <h5>Name: {user.name}</h5>
                             <h5>Gender: {user.gender}</h5>
-                            <h5>Breed: {user.breed}</h5>
                             <h5>Age: {user.age} yrs</h5>
                             <ul className="item_info_list unorder_list_block"></ul>
                           </div>

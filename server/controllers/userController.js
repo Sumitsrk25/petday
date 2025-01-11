@@ -54,6 +54,64 @@ function login(req, res) {
   });
 }
 
+function vetlogin(req, res) {
+  userModel.getVetByEmail(req.body.email, (err, data) => {
+    if (err) return res.json({ Error: "Login Error" });
+
+    if (data.length > 0) {
+      // Compare plain passwords directly
+      if (req.body.password === data[0].password) {
+        const name = data[0].firstName;
+        const mobile = data[0].mobile;
+        const customer_id = data[0].vetid;
+        const token = jwt.sign(
+          { name, mobile, customer_id }, // Ensure customer_id is included here
+          "jwt-secret-key",
+          {
+            expiresIn: "1d",
+          }
+        );
+
+        res.cookie("token", token);
+        return res.json({ Status: "Success" });
+      } else {
+        return res.json({ Error: "Password not matched" });
+      }
+    } else {
+      return res.json({ Error: "No Email Existed" });
+    }
+  });
+}
+
+function grommerlogin(req, res) {
+  userModel.getGrommerByEmail(req.body.email, (err, data) => {
+    if (err) return res.json({ Error: "Login Error" });
+
+    if (data.length > 0) {
+      // Compare plain passwords directly
+      if (req.body.password === data[0].password) {
+        const name = data[0].first_name;
+        const mobile = data[0].mobile;
+        const customer_id = data[0].vetid;
+        const token = jwt.sign(
+          { name, mobile, customer_id }, // Ensure customer_id is included here
+          "jwt-secret-key",
+          {
+            expiresIn: "1d",
+          }
+        );
+
+        res.cookie("token", token);
+        return res.json({ Status: "Success" });
+      } else {
+        return res.json({ Error: "Password not matched" });
+      }
+    } else {
+      return res.json({ Error: "No Email Existed" });
+    }
+  });
+}
+
 function getPetsByCustomerId(req, res) {
   const customerId = req.params.customerId;
 
@@ -120,6 +178,90 @@ function getGrommers(req, res) {
   });
 }
 
+function getAppbyCustomerId(req, res) {
+  const customer_id = req.params.customerId;
+
+  if (!customer_id || isNaN(customer_id)) {
+    return res.status(400).json({ Error: "Invalid customer_id" });
+  }
+
+  userModel.getAppbyCustomerId(customer_id, (err, data) => {
+    if (err) {
+      console.error("Error fetching customer_id:", err);
+      return res.status(500).json({ Error: "Internal Server Error" });
+    }
+    if (data.length === 0) {
+      return res
+        .status(404)
+        .json({ Message: "No customer found for this customer_id" });
+    }
+    return res.status(200).json(data);
+  });
+}
+
+function getAppbyVetId(req, res) {
+  const customer_id = req.params.customerId;
+
+  if (!customer_id || isNaN(customer_id)) {
+    return res.status(400).json({ Error: "Invalid customer_id" });
+  }
+
+  userModel.getAppbyCustomerId(customer_id, (err, data) => {
+    if (err) {
+      console.error("Error fetching customer_id:", err);
+      return res.status(500).json({ Error: "Internal Server Error" });
+    }
+    if (data.length === 0) {
+      return res
+        .status(404)
+        .json({ Message: "No customer found for this customer_id" });
+    }
+    return res.status(200).json(data);
+  });
+}
+
+function getAppbyGromId(req, res) {
+  const customer_id = req.params.customerId;
+
+  if (!customer_id || isNaN(customer_id)) {
+    return res.status(400).json({ Error: "Invalid customer_id" });
+  }
+
+  userModel.getAppbyGromId(customer_id, (err, data) => {
+    if (err) {
+      console.error("Error fetching customer_id:", err);
+      return res.status(500).json({ Error: "Internal Server Error" });
+    }
+    if (data.length === 0) {
+      return res
+        .status(404)
+        .json({ Message: "No customer found for this customer_id" });
+    }
+    return res.status(200).json(data);
+  });
+}
+
+function getVaccinebyPetId(req, res) {
+  const pet_id = req.params.petId;
+
+  if (!pet_id || isNaN(pet_id)) {
+    return res.status(400).json({ Error: "Invalid pet_id" });
+  }
+
+  userModel.getVaccinebyPetId(pet_id, (err, data) => {
+    if (err) {
+      console.error("Error fetching pet_id:", err);
+      return res.status(500).json({ Error: "Internal Server Error" });
+    }
+    if (data.length === 0) {
+      return res
+        .status(404)
+        .json({ Message: "No customer found for this pet_id" });
+    }
+    return res.status(200).json(data);
+  });
+}
+
 function getVetByVetId(req, res) {
   const vetId = req.params.vetId;
 
@@ -176,15 +318,86 @@ function addPetProfile(req, res) {
   );
 }
 
+function addVetProfile(req, res) {
+  const vetData = {
+    firstName: req.body.firstName,
+    lastName: req.body.lastName,
+    mobile: req.body.mobile,
+    email: req.body.email,
+    password: req.body.password,
+    location: req.body.location,
+    postaladdress: req.body.postaladdress,
+    pin: req.body.pin,
+    city: req.body.city,
+    state: req.body.state,
+    gender: req.body.gender,
+    bio: req.body.bio,
+    gstno: req.body.gstno,
+    medicalregno: req.body.medicalregno,
+    workingdays: req.body.workingdays.join(","),
+    workinghrs_frm: req.body.workinghrs_frm,
+    workinghrs_to: req.body.workinghrs_to,
+    speciality: req.body.speciality,
+    clinicname: req.body.clinicname,
+  };
+
+  userModel.addVetProfile(vetData, (err, result) => {
+    if (err) {
+      return res.json({ Error: "Error adding vet profile" });
+    }
+    return res.json({ Status: "Success" });
+  });
+}
+
+function addVaccine(req, res) {
+  console.log("Request Body:", req.body);
+
+  userModel.addVaccine(
+    req.body.customer_id,
+    req.body.pet_id,
+    req.body.vaccine_name,
+
+    (err, result) => {
+      if (err) {
+        console.error("Database Insertion Error:", err);
+        return res.json({ Error: "Inserting data Error in server" });
+      }
+      console.log("Database Insertion Success:", result);
+      return res.json({ Status: "Success" });
+    }
+  );
+}
+
 function bookAppointment(req, res) {
+  console.log("Request Body:", req.body);
+  const centername = req.body.clinicname || req.body.grooming_center_name;
+  const vet_id = req.body.vet_id;
+
+  if (!centername) {
+    return res.json({
+      Error: "Either clinicname or grooming_center_name is required",
+    });
+  }
+
+  if (!vet_id) {
+    return res.json({
+      Error: "vet_id is required",
+    });
+  }
+
   userModel.bookAppointment(
     req.body.customer_id,
     req.body.pet_id,
+    vet_id,
     req.body.book_date,
     req.body.type,
-
+    centername,
     (err, result) => {
-      if (err) return res.json({ Error: "Inserting data Error in server" });
+      if (err) {
+        console.error("Database Insertion Error:", err);
+        return res.json({ Error: "Inserting data Error in server" });
+      }
+      console.log("Database Insertion Success:", result);
       return res.json({ Status: "Success" });
     }
   );
@@ -209,6 +422,87 @@ function updatePetByPetId(req, res) {
       res.json({ Status: "Success" });
     }
   );
+}
+
+function updateVetByVetId(req, res) {
+  const vetId = req.params.vetid; // Extract vetid from the URL
+  const {
+    firstName,
+    lastName,
+    email,
+    mobile,
+    password,
+    location,
+    postaladdress,
+    pin,
+    city,
+    state,
+    gender,
+    bio,
+    gstno,
+    medicalregno,
+    speciality,
+    clinicname,
+    workingdays,
+    workinghrs_frm,
+    workinghrs_to,
+  } = req.body;
+
+  // Call the update function from the user model
+  userModel.updateVetProfile(
+    vetId,
+    firstName,
+    lastName,
+    email,
+    mobile,
+    password,
+    location,
+    postaladdress,
+    pin,
+    city,
+    state,
+    gender,
+    bio,
+    gstno,
+    medicalregno,
+    speciality,
+    clinicname,
+    workingdays,
+    workinghrs_frm,
+    workinghrs_to,
+    (err, result) => {
+      if (err) {
+        console.error("Error executing query:", err);
+        return res
+          .status(500)
+          .json({ error: new Error("Error updating vet profile").message });
+      }
+
+      // Send success response if no errors
+      res.json({ Status: "Success" });
+    }
+  );
+}
+
+function updateStatus(req, res) {
+  console.log("Request body received in updateStatus:", req.body);
+
+  const { appointmentId, status } = req.body;
+
+  if (!appointmentId || !status) {
+    console.error("Missing appointmentId or status in request body.");
+    return res.status(400).json({ Error: "Missing appointmentId or status" });
+  }
+
+  userModel.updateStatus(appointmentId, status, (err, result) => {
+    if (err) {
+      console.error("Error updating status in database:", err);
+      return res.status(500).json({ Error: "Failed to update status" });
+    }
+
+    console.log("Database update result:", result);
+    return res.json({ Status: "Success" });
+  });
 }
 
 // const addPetProfile = (req, res) => {
@@ -241,14 +535,24 @@ function logout(req, res) {
 module.exports = {
   register,
   login,
+  vetlogin,
+  grommerlogin,
   logout,
   getPetsByCustomerId,
   getPetByPetId,
   getVets,
   getGrommers,
+  getAppbyCustomerId,
+  getAppbyVetId,
+  getAppbyGromId,
+  getVaccinebyPetId,
   getVetByVetId,
   getGrommerByGrommerId,
   addPetProfile,
+  addVetProfile,
+  addVaccine,
   updatePetByPetId,
+  updateVetByVetId,
   bookAppointment,
+  updateStatus,
 };

@@ -29,9 +29,7 @@ export const UpdatePet = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await axios.get(
-          `/user/petbyid/${petid}`
-        );
+        const response = await axios.get(`/user/petbyid/${petid}`);
 
         if (response.status === 200) {
           setAuth(true);

@@ -16,7 +16,7 @@ export const VetsAdmin = () => {
   // Fetch user details
   useEffect(() => {
     axios
-      .get("/user/")
+      .get("/user")
       .then((res) => {
         console.log("Response Data:", res.data); // Check if customer_id is present
         if (res.data.Status === "Success") {
@@ -61,7 +61,7 @@ export const VetsAdmin = () => {
 
   const handleDelete = () => {
     axios
-      .get("/user/logout")
+      .get("/userlogout")
       .then((res) => {
         location.reload(true);
       })
@@ -111,7 +111,14 @@ export const VetsAdmin = () => {
                             </td>
                             <td>{user.clinicname}</td>
                             <td>
-                              <i className="fa fa-pencil ms-2"></i>
+                              <Link
+                                to="/admin/vetupdate"
+                                state={{
+                                  vetid: user.vetid,
+                                }}
+                              >
+                                <i className="fa fa-pencil ms-2"></i>
+                              </Link>
                             </td>
                           </tr>
                         ))

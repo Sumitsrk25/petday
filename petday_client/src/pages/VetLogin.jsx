@@ -1,30 +1,34 @@
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useAppStore } from "../store";
 
-export const Signup = () => {
+export const VetLogin = () => {
   const navigate = useNavigate();
+  const setUser = useAppStore((state) => state.setUser);
 
   const [values, setValues] = useState({
-    name: "",
-    lname: "",
     email: "",
-    mobile: "",
     password: "",
   });
+
+  // For Using Cors and JWT Token for axios its required
 
   // handle form on submit
   const handleSubmit = (event) => {
     event.preventDefault();
     axios
-      .post("/user/register", values)
+      .post("/user/vetlogin", values)
       // .then((res) => console.log(res))
       .then((res) => {
         if (res.data.Status === "Success") {
-          alert("Login Successfull1");
-          navigate("/login");
+          alert("Login Successfull");
+          // Store customer_id in localStorage
+          setUser({ email: values.email });
+
+          navigate("/homevet");
         } else {
-          alert("Error1");
+          alert(res.data.Error);
         }
       })
       .then((err) => console.log(err));
@@ -41,9 +45,9 @@ export const Signup = () => {
                   <li>
                     <a href="index.html">Home</a>
                   </li>
-                  <li>SignUp</li>
+                  <li>Vet Login</li>
                 </ul>
-                <h1 className="page_title">SignUp</h1>
+                <h1 className="page_title">Vet Login</h1>
               </div>
             </div>
           </div>
@@ -60,47 +64,13 @@ export const Signup = () => {
               <div className="col col-lg-6 offset-md-3 mb-5">
                 <div className="section_title">
                   <h2 className="title_text">
-                    <span className="sub_title">SignUp</span> User SignUp
+                    <span className="sub_title">Login</span> Vet Login
                   </h2>
                 </div>
                 <div className="contact_form">
                   <form onSubmit={handleSubmit}>
                     <div className="row">
-                      <div className="col col-md-6 col-sm-6">
-                        <div className="form_item mb-0">
-                          <label className="input_title" htmlFor="input_name">
-                            First Name<sup>*</sup>
-                          </label>
-                          <input
-                            id="input_name"
-                            type="text"
-                            placeholder="Type Your Name"
-                            name="name"
-                            onChange={(e) =>
-                              setValues({ ...values, name: e.target.value })
-                            }
-                          />
-                        </div>
-                      </div>
-
-                      <div className="col col-md-6 col-sm-6">
-                        <div className="form_item mb-0">
-                          <label className="input_title" htmlFor="input_name">
-                            Last Name<sup>*</sup>
-                          </label>
-                          <input
-                            id="input_name"
-                            type="text"
-                            placeholder="Type Your Last Name"
-                            name="lname"
-                            onChange={(e) =>
-                              setValues({ ...values, lname: e.target.value })
-                            }
-                          />
-                        </div>
-                      </div>
-
-                      <div className="col col-md-6 col-sm-6">
+                      <div className="col col-md-12 col-sm-12">
                         <div className="form_item mb-0">
                           <label className="input_title" htmlFor="input_email">
                             Email<sup>*</sup>
@@ -116,22 +86,7 @@ export const Signup = () => {
                           />
                         </div>
                       </div>
-                      <div className="col col-md-6 col-sm-6">
-                        <div className="form_item mb-0">
-                          <label className="input_title" htmlFor="input_email">
-                            Mobile No<sup>*</sup>
-                          </label>
-                          <input
-                            id="input_email"
-                            type="number"
-                            placeholder="Type Your Email"
-                            name="mobile"
-                            onChange={(e) =>
-                              setValues({ ...values, mobile: e.target.value })
-                            }
-                          />
-                        </div>
-                      </div>
+
                       <div className="col col-md-12 col-sm-12">
                         <div className="form_item mb-0">
                           <label className="input_title" htmlFor="input_email">
@@ -150,7 +105,7 @@ export const Signup = () => {
                       </div>
                       <div className="col col-md-12 col-sm-12">
                         <button type="submit" className="btn btn_primary">
-                          <i className="fas fa-paw" /> SignUp
+                          <i className="fas fa-paw" /> Login
                         </button>
                       </div>
                     </div>

@@ -2,8 +2,8 @@ import { Link } from "react-router-dom";
 import { useAppStore } from "../store";
 
 export const Navbar = () => {
-  const user = useAppStore(state => state.user);
-  const logout = useAppStore(state => state.logout)
+  const user = useAppStore((state) => state.user);
+  const logout = useAppStore((state) => state.logout);
 
   return user?.email ? (
     <>
@@ -196,7 +196,7 @@ export const Navbar = () => {
                       </a>
                     </li>
                     <li>
-                      <a className="dropdown-item" href="groomers">
+                      <a className="dropdown-item" href="grommers">
                         <i className="fas fa-cut" /> Book with Groomer
                       </a>
                     </li>
@@ -209,95 +209,96 @@ export const Navbar = () => {
       </header>
       {/* Header END */}
     </>
-  ) : <>
-    {/* Header START */}
-    <div className="backtotop">
-      <a href="#" className="scroll">
-        <i className="far fa-arrow-up" />
-      </a>
-    </div>
-    <header className="header_section header_boxed">
-      <div className="container">
-        <div className="box_wrap d-flex align-items-center justify-content-between">
-          <div className="site_logo">
-            <Link to="/">
-              <img
-                className="logo_before"
-                src="assets/images/logo/logo.svg"
-                alt="Petday Logo"
-                style={{ width: 150 }}
-              />
-            </Link>
-          </div>
-          <nav className="main_menu navbar navbar-expand-lg">
-            <div
-              className="main_menu_inner collapse navbar-collapse"
-              id="main_menu_dropdown"
-            >
-              <form>
-                <div className="input-group">
-                  <input
-                    type="text"
-                    className="form-control"
-                    placeholder="Search"
-                    style={{ borderRadius: 5 }}
-                  />
-                  <div className="input-group-btn" style={{ marginLeft: 2 }}>
-                    <button className="btn btn-warning" type="submit">
-                      <i
-                        className="fas fa-search"
-                        style={{ color: "black", marginLeft: 3 }}
-                      />
-                    </button>
-                  </div>
-                </div>
-              </form>
-            </div>
-          </nav>
-          <ul className="header_btns_group unorder_list_right">
-            <li>
-              <button
-                className="mobile_menu_btn"
-                type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#main_menu_dropdown"
-                aria-controls="main_menu_dropdown"
-                aria-expanded="false"
-                aria-label="Toggle navigation"
-              >
-                <i className="far fa-bars" />
-              </button>
-            </li>
-            <li className="dropdown">
-              <a href="signup" className="cart_btn" type="button">
-                <i className="fas fa-paw" />
-                <small className="cart_counter">Signup</small>
-              </a>
-            </li>
-            <li className="dropdown">
-              <a href="login" className="cart_btn" type="button">
-                <i className="fas fa-paw" />
-                <small className="cart_counter">Login</small>
-              </a>
-            </li>
-            <li className="dropdown">
-              <a href="logout" className="cart_btn" type="button">
-                <i className="fas fa-paw" />
-                <small className="cart_counter">Partners</small>
-              </a>
-            </li>
-            <li className="dropdown">
-              <a href="logout" className="cart_btn" type="button">
-                <i className="fas fa-paw" />
-                <small className="cart_counter">Contact Us</small>
-              </a>
-            </li>
-          </ul>
-        </div>
+  ) : (
+    <>
+      {/* Header START */}
+      <div className="backtotop">
+        <a href="#" className="scroll">
+          <i className="far fa-arrow-up" />
+        </a>
       </div>
-    </header>
+      <header className="header_section header_boxed">
+        <div className="container">
+          <div className="box_wrap d-flex align-items-center justify-content-between">
+            <div className="site_logo">
+              <Link to="/">
+                <img
+                  className="logo_before"
+                  src="assets/images/logo/logo.svg"
+                  alt="Petday Logo"
+                  style={{ width: 150 }}
+                />
+              </Link>
+            </div>
+            <nav className="main_menu navbar navbar-expand-lg">
+              <div
+                className="main_menu_inner collapse navbar-collapse"
+                id="main_menu_dropdown"
+              >
+                <form>
+                  <div className="input-group">
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="Search"
+                      style={{ borderRadius: 5 }}
+                    />
+                    <div className="input-group-btn" style={{ marginLeft: 2 }}>
+                      <button className="btn btn-warning" type="submit">
+                        <i
+                          className="fas fa-search"
+                          style={{ color: "black", marginLeft: 3 }}
+                        />
+                      </button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </nav>
+            <ul className="header_btns_group unorder_list_right">
+              <li>
+                <button
+                  className="mobile_menu_btn"
+                  type="button"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#main_menu_dropdown"
+                  aria-controls="main_menu_dropdown"
+                  aria-expanded="false"
+                  aria-label="Toggle navigation"
+                >
+                  <i className="far fa-bars" />
+                </button>
+              </li>
+              <li className="dropdown">
+                <a href="signup" className="cart_btn" type="button">
+                  <i className="fas fa-paw" />
+                  <small className="cart_counter">Signup</small>
+                </a>
+              </li>
+              <li className="dropdown">
+                <a href="login" className="cart_btn" type="button">
+                  <i className="fas fa-paw" />
+                  <small className="cart_counter">Login</small>
+                </a>
+              </li>
+              <li className="dropdown">
+                <a href="logout" className="cart_btn" type="button">
+                  <i className="fas fa-paw" />
+                  <small className="cart_counter">Partners</small>
+                </a>
+              </li>
+              <li className="dropdown">
+                <a href="logout" className="cart_btn" type="button">
+                  <i className="fas fa-paw" />
+                  <small className="cart_counter">Contact Us</small>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </header>
 
-
-    {/* Header END */}
-  </>;
+      {/* Header END */}
+    </>
+  );
 };

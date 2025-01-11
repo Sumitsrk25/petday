@@ -27,6 +27,7 @@ export const GrommerApp = () => {
     pet_id: "",
     book_date: "",
     type: "Visit",
+    grooming_center_name: "",
   });
 
   // Update the values state when customerId changes
@@ -79,13 +80,17 @@ export const GrommerApp = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await axios.get(
-          `/user/grommerbyid/${groomer_id}`
-        );
+        const response = await axios.get(`/user/grommerbyid/${groomer_id}`);
 
         if (response.status === 200) {
           setAuth(true);
-          setUserData(response.data); // Assuming the response contains an array or array-like structure
+          const data = response.data;
+
+          setUserData(data); // Update the userData state
+          setValues((prevValues) => ({
+            ...prevValues,
+            grooming_center_name: data.grooming_center_name || "", // Extract and set clinicname
+          }));
         } else {
           setAuth(false);
           setMessage(response.data.message || "Authorization failed.");
@@ -106,9 +111,7 @@ export const GrommerApp = () => {
   useEffect(() => {
     const fetchUserData1 = async () => {
       try {
-        const response = await axios.get(
-          `/user/pets/${customer_id}`
-        );
+        const response = await axios.get(`/user/pets/${customer_id}`);
 
         if (response.status === 200) {
           setAuth(true);

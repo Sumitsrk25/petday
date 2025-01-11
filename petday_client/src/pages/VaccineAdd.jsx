@@ -1,20 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
-import { addDays } from "date-fns";
 
-export const VetApp = () => {
+export const VaccineAdd = () => {
   const [auth, setAuth] = useState(false);
-  const location = useLocation();
   const navigate = useNavigate(); // Initialize navigate
-  const { vetid } = location.state || {}; // Safeguard against undefined state
   const [customer_id, setCustomerId] = useState("");
   const [userData, setUserData] = useState([]);
   const [userData1, setUserData1] = useState([]);
-  const [selectedDate, setSelectedDate] = useState(null);
-  const [workingDays, setWorkingDays] = useState([]);
 
   useEffect(() => {
     const storedCustomerId = localStorage.getItem("customer_id");
@@ -25,9 +18,7 @@ export const VetApp = () => {
   const [values, setValues] = useState({
     customer_id: "",
     pet_id: "",
-    book_date: "",
-    type: "Visit",
-    clinicname: "",
+    vaccine_name: "",
   });
 
   // Update the values state when customerId changes
@@ -44,70 +35,6 @@ export const VetApp = () => {
 
   // For Using Cors and JWT Token for axios its required
   axios.defaults.withCredentials = true;
-
-  useEffect(() => {
-    if (userData?.workingdays) {
-      // Convert working days string to an array of day indexes
-      const daysOfWeek = [
-        "Sunday",
-        "Monday",
-        "Tuesday",
-        "Wednesday",
-        "Thursday",
-        "Friday",
-        "Saturday",
-      ];
-      const days = userData.workingdays.split(",").map((day) => day.trim());
-      const dayIndexes = days.map((day) => daysOfWeek.indexOf(day));
-      setWorkingDays(dayIndexes);
-    }
-  }, [userData]);
-
-  const isDayAllowed = (date) => {
-    const today = new Date();
-    // Allow only future dates and working days
-    return date >= today && workingDays.includes(date.getDay());
-  };
-
-  const handleDateChange = (date) => {
-    setSelectedDate(date);
-    setValues((prevValues) => ({
-      ...prevValues,
-      book_date: date, // Update the book_date in form values
-      vet_id: vetid,
-    }));
-  };
-
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const response = await axios.get(`/user/vetbyid/${vetid}`);
-
-        if (response.status === 200) {
-          setAuth(true);
-          const data = response.data;
-
-          setUserData(data); // Update the userData state
-          setValues((prevValues) => ({
-            ...prevValues,
-            clinicname: data.clinicname || "", // Extract and set clinicname
-          }));
-        } else {
-          setAuth(false);
-          setMessage(response.data.message || "Authorization failed.");
-        }
-      } catch (err) {
-        setAuth(false);
-        setMessage("An error occurred. Please log in again.");
-        console.error(err);
-      }
-    };
-
-    // Ensure vetid is available before making the API call
-    if (vetid) {
-      fetchUserData();
-    }
-  }, [vetid]);
 
   useEffect(() => {
     const fetchUserData1 = async () => {
@@ -139,14 +66,14 @@ export const VetApp = () => {
   const handleSubmit = (event) => {
     event.preventDefault();
     axios
-      .post("/user/book-appointment", values)
+      .post("/user/add-vaccine", values)
       // .then((res) => console.log(res))
       .then((res) => {
         if (res.data.Status === "Success") {
-          alert("Appointment Added. Plz wait for confirmation");
+          alert("Vaccine Added Successfully");
           navigate("/home1");
         } else {
-          alert("Error1");
+          alert("Error");
         }
       })
       .then((err) => console.log(err));
@@ -161,7 +88,7 @@ export const VetApp = () => {
               <div className="col col-lg-6 offset-md-3 mb-5">
                 <div className="section_title">
                   <h2 className="title_text">
-                    <span className="sub_title">Appointment</span> Book
+                    <span className="sub_title">Vaccine</span> Add Vaccine
                     Appointment
                   </h2>
                 </div>
@@ -170,18 +97,7 @@ export const VetApp = () => {
                     Dr. {userData.firstName}
                     {userData.lastName}
                   </h4>
-                  <div className="d-flex ">
-                    <h6>
-                      Appointment Days
-                      <p
-                        className="mt-2"
-                        style={{ fontWeight: "normal", fontSize: "18px " }}
-                      >
-                        {userData.workingdays}
-                      </p>
-                    </h6>
-                  </div>
-                  <br></br>
+
                   <form onSubmit={handleSubmit}>
                     <div className="row">
                       {/* <div className="col col-md-12 col-sm-12">
@@ -208,18 +124,22 @@ export const VetApp = () => {
                       </div> */}
 
                       <div className="col col-md-6 col-sm-6">
-                        <label className="form-label">Select a Date</label>
-                        <br />
-                        <DatePicker
-                          selected={selectedDate}
-                          value={values.book_date}
-                          onChange={handleDateChange}
-                          filterDate={isDayAllowed} // Filter for working days and future dates
-                          dateFormat="MM/dd/yyyy"
-                          placeholderText="Select a date"
-                          className="form-select form-select-lg mb-3"
-                          onKeyDown={(e) => e.preventDefault()} // Block keyboard input
-                        />
+                        <div className="form_item mb-0">
+                          <label className="input_title" htmlFor="input_name">
+                            Vaccine Name<sup>*</sup>
+                          </label>
+                          <input
+                            type="text"
+                            placeholder="Type Vaccine Name"
+                            name="vaccine_name"
+                            onChange={(e) =>
+                              setValues({
+                                ...values,
+                                vaccine_name: e.target.value,
+                              })
+                            }
+                          />
+                        </div>
                       </div>
 
                       <div className="col col-md-6 col-sm-6">
