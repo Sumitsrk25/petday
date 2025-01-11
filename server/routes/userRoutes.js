@@ -33,6 +33,8 @@ router.post("/verify-payment", userController.verifyPayment);
 router.get("/shop-all", userController.getAllShopItems);
 
 router.get("/", verifyUser, (req, res) => {
+  console.log('the req with cookie is auth>>>>>', req.customer_id);
+
   return res.json({
     Status: "Success",
     name: req.name,
